@@ -62,9 +62,15 @@ export const docs = new Command()
           item.meta?.links as Record<string, Record<string, string>> | undefined
         )?.[base]
 
-        const links = metaLinks && Object.keys(metaLinks).length > 0
+        const hasMeta = metaLinks && Object.keys(metaLinks).length > 0
+        if (!hasMeta) {
+          logger.warn(
+            `No registry links found for ${highlighter.info(component)} (base: ${base}). Using best-effort fallback URL.`,
+          )
+        }
+        const links = hasMeta
           ? metaLinks
-          : { docs: `${SHADCN_VUE_URL}/docs/components/${component}` }
+          : { docs: `${SHADCN_VUE_URL}/${base}/docs/components/${component}` }
 
         results.push({ component, base, links })
       }
